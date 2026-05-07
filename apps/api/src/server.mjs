@@ -91,7 +91,7 @@ const maxJsonBodyBytes = Number(process.env.MAX_JSON_BODY_BYTES ?? 1024 * 1024);
 
 seedInitialData();
 
-const server = createServer(async (request, response) => {
+export async function handleRequest(request, response) {
   try {
     await route(request, response);
   } catch (error) {
@@ -101,11 +101,19 @@ const server = createServer(async (request, response) => {
       message: status >= 500 ? "Internal server error" : String(error.message)
     });
   }
-});
+}
 
-server.listen(port, host, () => {
-  console.log(`AI marketing agents MVP listening on http://${host}:${port}`);
-});
+const server = createServer(handleRequest);
+
+if (shouldStartServer()) {
+  server.listen(port, host, () => {
+    console.log(`AI marketing agents MVP listening on http://${host}:${port}`);
+  });
+}
+
+function shouldStartServer() {
+  return process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1]);
+}
 
 async function route(request, response) {
   const url = new URL(request.url, `http://${request.headers.host}`);
