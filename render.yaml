@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: marketing-os-coze-gateway
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/coze/openapi.yaml
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: STORE_PATH
+        value: /data/dev-store.json
+      - key: COZE_PLUGIN_ENABLED
+        value: true
+      - key: COZE_PLUGIN_TOKEN
+        sync: false
+      - key: LOCAL_API_WRITE_TOKEN
+        sync: false
+      - key: MINIMAX_API_KEY
+        sync: false
+      - key: MINIMAX_BASE_URL
+        value: https://api.minimax.io/v1
+      - key: MINIMAX_MODEL
+        value: MiniMax-M2.7
+      - key: CODEX_MODEL
+        value: gpt-5.5
+      - key: DEFAULT_WORKSPACE_ID
+        value: default

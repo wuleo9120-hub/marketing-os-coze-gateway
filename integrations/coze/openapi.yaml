@@ -1,0 +1,284 @@
+openapi: 3.0.3
+info:
+  title: Marketing OS Coze Gateway
+  version: 0.1.0
+  description: >
+    Coze-facing gateway for the AI multi-agent marketing operating system.
+    Coze should call only these controlled endpoints. High-risk live actions
+    remain approval-gated inside Marketing OS.
+servers:
+  - url: https://YOUR_PUBLIC_MARKETING_OS_HOST
+    description: Replace with your deployed public HTTPS base URL.
+security:
+  - CozeToken: []
+parameters:
+  WorkspaceId:
+    name: x-workspace-id
+    in: header
+    required: false
+    schema:
+      type: string
+    description: Merchant workspace id. Defaults to default when omitted.
+components:
+  securitySchemes:
+    CozeToken:
+      type: apiKey
+      in: header
+      name: x-coze-token
+  schemas:
+    CozeChatRequest:
+      type: object
+      required: [content]
+      properties:
+        workspace_id:
+          type: string
+        content:
+          type: string
+          description: Operator instruction for the multi-agent orchestrator.
+        auto_execute:
+          type: boolean
+          default: true
+    MerchantOnboardingRequest:
+      type: object
+      required: [name, industry, brand_intro, audience]
+      properties:
+        workspace_id:
+          type: string
+        name:
+          type: string
+        industry:
+          type: string
+        city:
+          type: string
+        brand_intro:
+          type: string
+        products:
+          type: string
+        audience:
+          type: string
+        offer:
+          type: string
+        price_range:
+          type: string
+        faq:
+          type: string
+        compliance:
+          type: string
+        platforms:
+          type: string
+          example: douyin,xiaohongshu,shipinhao
+        weixin_personal_qr_url:
+          type: string
+        weixin_personal_account_label:
+          type: string
+    FirstPlanRequest:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        run_id:
+          type: string
+    KnowledgeSearchRequest:
+      type: object
+      required: [query]
+      properties:
+        workspace_id:
+          type: string
+        query:
+          type: string
+        limit:
+          type: integer
+          default: 5
+    LeadRequest:
+      type: object
+      required: [display_name]
+      properties:
+        workspace_id:
+          type: string
+        display_name:
+          type: string
+        source_platform:
+          type: string
+          default: coze
+        source_content_id:
+          type: string
+        contact_method:
+          type: string
+        contact_value:
+          type: string
+        summary:
+          type: string
+    CustomerMessageRequest:
+      type: object
+      required: [lead_id, content]
+      properties:
+        workspace_id:
+          type: string
+        lead_id:
+          type: string
+        content:
+          type: string
+    WorkspaceRequest:
+      type: object
+      required: [name]
+      properties:
+        id:
+          type: string
+        workspace_id:
+          type: string
+        name:
+          type: string
+        merchant_name:
+          type: string
+paths:
+  /api/coze/health:
+    get:
+      operationId: cozeHealth
+      summary: Check Marketing OS Coze gateway health.
+      parameters:
+        - $ref: "#/parameters/WorkspaceId"
+      responses:
+        "200":
+          description: Gateway status.
+  /api/coze/workspaces:
+    get:
+      operationId: listWorkspaces
+      summary: List merchant workspaces.
+      parameters:
+        - $ref: "#/parameters/WorkspaceId"
+      responses:
+        "200":
+          description: Workspace list.
+    post:
+      operationId: createWorkspace
+      summary: Create or update a merchant workspace.
+      parameters:
+        - $ref: "#/parameters/WorkspaceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkspaceRequest"
+      responses:
+        "201":
+          description: Created workspace.
+  /api/coze/merchant/onboarding:
+    post:
+      operationId: onboardMerchant
+      summary: Submit merchant materials and seed memory/knowledge base.
+      parameters:
+        - $ref: "#/parameters/WorkspaceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MerchantOnboardingRequest"
+      responses:
+        "201":
+          description: Onboarding result.
+  /api/coze/marketing/first-plan:
+    post:
+      operationId: generateFirstMarketingPlan
+      summary: Generate first marketing plan from merchant materials.
+      parameters:
+        - $ref: "#/parameters/WorkspaceId"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FirstPlanRequest"
+      responses:
+        "201":
+          description: Marketing plan, content assets, publishing packages, metric templates.
+  /api/coze/chat:
+    post:
+      operationId: runMarketingOrchestrator
+      summary: Send an instruction to the multi-agent orchestrator.
+      parameters:
+        - $ref: "#/parameters/WorkspaceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CozeChatRequest"
+      responses:
+        "200":
+          description: Agent plan summary and execution status.
+  /api/coze/knowledge/search:
+    post:
+      operationId: searchKnowledge
+      summary: Search merchant-scoped knowledge base.
+      parameters:
+        - $ref: "#/parameters/WorkspaceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeSearchRequest"
+      responses:
+        "200":
+          description: Knowledge search results.
+  /api/coze/crm/leads:
+    post:
+      operationId: createLead
+      summary: Create a CRM lead.
+      parameters:
+        - $ref: "#/parameters/WorkspaceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LeadRequest"
+      responses:
+        "201":
+          description: Created lead.
+  /api/coze/crm/messages:
+    post:
+      operationId: draftCustomerReply
+      summary: Draft an AI customer-service reply for a lead.
+      parameters:
+        - $ref: "#/parameters/WorkspaceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerMessageRequest"
+      responses:
+        "201":
+          description: Draft reply, intent score, and handoff signal.
+  /api/coze/publishing/review:
+    get:
+      operationId: getPublishingReviewQueue
+      summary: Read publishing review queue. Does not publish.
+      parameters:
+        - $ref: "#/parameters/WorkspaceId"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Review queue summary.
+  /api/coze/marketing/metric-review-loop:
+    post:
+      operationId: runMetricReviewLoop
+      summary: Run metric review and create next-round low-risk tasks.
+      parameters:
+        - $ref: "#/parameters/WorkspaceId"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FirstPlanRequest"
+      responses:
+        "201":
+          description: Review result and next-round tasks.

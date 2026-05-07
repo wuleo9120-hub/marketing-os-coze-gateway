@@ -1,0 +1,16 @@
+{
+  "name": "ai-marketing-agents",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node apps/api/src/server.mjs",
+    "dev": "node apps/api/src/server.mjs",
+    "build": "node scripts/run-build-tasks.mjs",
+    "check": "node --check apps/api/src/server.mjs && node --check apps/api/src/core/orchestrator.mjs && node --check apps/api/src/core/model-router.mjs && node --check apps/api/src/core/task-executor.mjs && node --check apps/api/src/core/tool-registry.mjs && node --check apps/api/src/core/knowledge-base.mjs && node --check apps/api/src/core/customer-service.mjs && node --check apps/api/src/core/content-ops.mjs && node --check apps/api/src/core/analytics-review.mjs && node --check apps/api/src/core/agent-optimizer.mjs && node --check apps/api/src/core/config-registry.mjs && node --check apps/api/src/core/env-loader.mjs && node --check apps/api/src/core/agent-context.mjs && node --check apps/api/src/core/governance.mjs && node --check apps/api/src/bridges/openclaw-http-bridge.mjs && node --check apps/api/src/core/connectors/hermes-gateway.mjs && node --check apps/api/src/core/connectors/openclaw-connector.mjs && node --check apps/api/src/core/connectors/platform-connector.mjs && node --check apps/api/src/core/connectors/wecom-connector.mjs && node --check apps/api/src/core/providers/index.mjs && node --check apps/api/src/core/providers/openai-provider.mjs && node --check apps/api/src/core/providers/minimax-provider.mjs && node --check apps/api/src/core/providers/codex-supervised-provider.mjs && node --check apps/api/src/core/providers/stub-provider.mjs && node --check apps/api/src/data/store.mjs && node --check apps/web/public/app.js && node --check scripts/smoke-test.mjs && node --check scripts/run-build-tasks.mjs && node --check scripts/approval-flow-test.mjs && node --check scripts/tool-registry-test.mjs && node --check scripts/hermes-connector-test.mjs && node --check scripts/openclaw-connector-test.mjs && node --check scripts/openclaw-bridge-test.mjs && node --check scripts/agent-optimization-test.mjs && node --check scripts/knowledge-base-test.mjs && node --check scripts/agent-knowledge-test.mjs && node --check scripts/customer-service-test.mjs && node --check scripts/content-ops-test.mjs && node --check scripts/analytics-review-test.mjs && node --check scripts/platform-wecom-connector-test.mjs && node --check scripts/config-registry-test.mjs && node --check scripts/model-routing-test.mjs && node --check scripts/env-status.mjs && node --check scripts/governance-test.mjs && node scripts/smoke-test.mjs && node scripts/approval-flow-test.mjs && node scripts/tool-registry-test.mjs && node scripts/hermes-connector-test.mjs && node scripts/openclaw-connector-test.mjs && node scripts/openclaw-bridge-test.mjs && node scripts/agent-optimization-test.mjs && node scripts/knowledge-base-test.mjs && node scripts/agent-knowledge-test.mjs && node scripts/customer-service-test.mjs && node scripts/content-ops-test.mjs && node scripts/analytics-review-test.mjs && node scripts/platform-wecom-connector-test.mjs && node scripts/config-registry-test.mjs && node scripts/model-routing-test.mjs && node scripts/governance-test.mjs"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

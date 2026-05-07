@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Marketing Agents</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">AI Marketing Agents</p>
+            <h1>多 Agent 营销中控台</h1>
+          </div>
+          <div class="status-pill" id="healthStatus">检查中</div>
+        </header>
+
+        <section class="workspace-switcher" aria-label="商家空间">
+          <div>
+            <p class="eyebrow">当前商家</p>
+            <strong id="activeWorkspaceLabel">default</strong>
+          </div>
+          <label class="select-field">
+            <span>切换</span>
+            <select id="workspaceSelect"></select>
+          </label>
+          <form class="workspace-form" id="workspaceForm">
+            <input id="workspaceName" placeholder="新增商家空间名称" />
+            <button type="submit">新增</button>
+          </form>
+        </section>
+
+        <section class="project-status" id="projectStatus"></section>
+
+        <section class="console-layout">
+          <div class="chat-panel">
+            <div class="panel-heading">
+              <h2>对话式总控</h2>
+              <button class="icon-button" id="refreshButton" title="刷新状态">
+                ↻
+              </button>
+            </div>
+
+            <div class="messages" id="messages"></div>
+
+            <form class="composer" id="chatForm">
+              <textarea
+                id="chatInput"
+                rows="4"
+                placeholder="例如：请帮我为本周设计一个小红书和抖音营销计划，并生成3条短视频脚本"
+              ></textarea>
+              <button type="submit">发送任务</button>
+            </form>
+          </div>
+
+          <aside class="side-panel">
+            <div class="panel-block">
+              <div class="panel-heading">
+                <h2>商家资料提交</h2>
+              </div>
+              <form class="memory-form" id="merchantOnboardingForm">
+                <input id="merchantName" placeholder="商家/品牌名称" />
+                <input id="merchantIndustry" placeholder="行业，例如 本地烘焙/医美/教育" />
+                <input id="merchantCity" placeholder="城市，可留空" />
+                <textarea
+                  id="merchantBrandIntro"
+                  rows="4"
+                  placeholder="品牌介绍、业务背景、核心差异"
+                ></textarea>
+                <textarea
+                  id="merchantProducts"
+                  rows="4"
+                  placeholder="产品/服务，每行一个"
+                ></textarea>
+                <textarea
+                  id="merchantAudience"
+                  rows="3"
+                  placeholder="目标客户画像"
+                ></textarea>
+                <textarea
+                  id="merchantFaq"
+                  rows="4"
+                  placeholder="常见问题，每行一个"
+                ></textarea>
+                <textarea
+                  id="merchantCompliance"
+                  rows="3"
+                  placeholder="禁用词/合规要求，每行一个"
+                ></textarea>
+                <input id="merchantPlatforms" placeholder="平台：douyin,xiaohongshu,shipinhao" />
+                <input id="merchantWeixinQr" placeholder="个人微信二维码 URL，可留空" />
+                <input id="merchantWeixinLabel" placeholder="个人微信账号标签，可留空" />
+                <button type="submit">提交商家资料</button>
+              </form>
+              <button type="button" id="firstMarketingPlanButton">生成首轮营销计划</button>
+              <div class="list" id="merchantOnboardingResult"></div>
+            </div>
+
+            <div class="panel-block spaced">
+              <div class="panel-heading">
+                <h2>共同记忆</h2>
+              </div>
+              <form class="memory-form" id="memoryForm">
+                <input id="memoryTitle" placeholder="记忆标题" />
+                <textarea
+                  id="memoryContent"
+                  rows="3"
+                  placeholder="产品资料、品牌语气、客户画像、禁用词等"
+                ></textarea>
+                <button type="submit">写入记忆</button>
+              </form>
+              <div class="list" id="memories"></div>
+            </div>
+
+            <div class="panel-block spaced">
+              <div class="panel-heading">
+                <h2>知识库</h2>
+              </div>
+              <form class="memory-form" id="knowledgeForm">
+                <input id="knowledgeTitle" placeholder="资料标题" />
+                <textarea
+                  id="knowledgeContent"
+                  rows="5"
+                  placeholder="粘贴产品资料、案例、FAQ、话术、禁用词等"
+                ></textarea>
+                <button type="submit">写入知识库</button>
+              </form>
+              <form class="memory-form" id="knowledgeSearchForm">
+                <input id="knowledgeQuery" placeholder="搜索知识库" />
+                <button type="submit">检索</button>
+              </form>
+              <div class="list" id="knowledgeResults"></div>
+            </div>
+
+            <div class="panel-block spaced">
+              <div class="panel-heading">
+                <h2>线索 CRM</h2>
+              </div>
+              <form class="memory-form" id="leadForm">
+                <input id="leadName" placeholder="客户称呼" />
+                <input id="leadPlatform" placeholder="来源平台，例如 douyin" />
+                <input id="leadContact" placeholder="联系方式，可留空" />
+                <button type="submit">创建线索</button>
+              </form>
+              <form class="memory-form" id="customerMessageForm">
+                <input id="messageLeadId" placeholder="lead_id" />
+                <textarea
+                  id="customerMessage"
+                  rows="3"
+                  placeholder="模拟客户咨询内容"
+                ></textarea>
+                <button type="submit">AI 客服回复</button>
+              </form>
+              <div class="list" id="crmItems"></div>
+            </div>
+
+            <div class="panel-block spaced">
+              <div class="panel-heading">
+                <h2>个人微信承接</h2>
+              </div>
+              <div id="weixinPersonalStatus"></div>
+              <form class="memory-form" id="weixinPersonalLeadForm">
+                <input id="weixinPersonalLeadName" placeholder="客户称呼" />
+                <input id="weixinPersonalAlias" placeholder="微信号/备注，可留空" />
+                <input id="weixinPersonalSource" placeholder="来源内容 ID，可留空" />
+                <button type="submit">记录个微线索</button>
+              </form>
+              <form class="memory-form" id="weixinPersonalMessageForm">
+                <input id="weixinPersonalLeadId" placeholder="lead_id" />
+                <textarea
+                  id="weixinPersonalMessage"
+                  rows="3"
+                  placeholder="客户在个人微信里的咨询内容"
+                ></textarea>
+                <button type="submit">生成个微回复草稿</button>
+              </form>
+              <div class="list" id="weixinPersonalItems"></div>
+            </div>
+
+            <div class="panel-block spaced">
+              <div class="panel-heading">
+                <h2>内容资产</h2>
+              </div>
+              <form class="memory-form" id="assetForm">
+                <input id="assetTitle" placeholder="资产标题" />
+                <textarea
+                  id="assetBody"
+                  rows="4"
+                  placeholder="脚本、标题、封面文案、发布正文等"
+                ></textarea>
+                <button type="submit">创建资产</button>
+              </form>
+              <form class="memory-form" id="publishingPackageForm">
+                <input id="packageAssetId" placeholder="content_asset_id" />
+                <input id="packagePlatforms" placeholder="平台：douyin,xiaohongshu,shipinhao" />
+                <button type="submit">生成发布包</button>
+              </form>
+              <div class="list" id="contentItems"></div>
+            </div>
+
+            <div class="panel-block spaced">
+              <div class="panel-heading">
+                <h2>发布审核</h2>
+              </div>
+              <form class="memory-form" id="manualPublishForm">
+                <input id="manualPublishJobId" placeholder="publishing_job_id" />
+                <input id="manualPublishUrl" placeholder="发布链接，可留空" />
+                <input id="manualPublishViews" placeholder="初始播放/阅读" />
+                <input id="manualPublishLikes" placeholder="初始点赞" />
+                <input id="manualPublishComments" placeholder="初始评论" />
+                <input id="manualPublishLeads" placeholder="初始线索" />
+                <button type="submit">标记人工已发布</button>
+              </form>
+              <div class="list" id="publishingReviewItems"></div>
+            </div>
+
+            <div class="panel-block spaced">
+              <div class="panel-heading">
+                <h2>指标复盘</h2>
+              </div>
+              <form class="memory-form" id="metricForm">
+                <input id="metricEntityType" placeholder="entity_type，例如 content_asset" />
+                <input id="metricEntityId" placeholder="entity_id" />
+                <input id="metricName" placeholder="metric，例如 views/leads" />
+                <input id="metricValue" placeholder="数值" />
+                <input id="metricPlatform" placeholder="平台，可留空" />
+                <button type="submit">记录指标</button>
+              </form>
+              <button type="button" id="reviewButton">生成复盘记忆</button>
+              <button type="button" id="metricReviewLoopButton">真实指标复盘循环</button>
+              <button type="button" id="executeNextRoundButton">执行下一轮任务</button>
+              <button type="button" id="optimizeButton">Agent 自我优化</button>
+              <button type="button" id="cycleButton">自主循环执行</button>
+              <button type="button" id="demoFlowButton">加载虚拟商家流程</button>
+              <div class="list" id="analyticsItems"></div>
+            </div>
+
+            <div class="panel-block spaced">
+              <div class="panel-heading">
+                <h2>运行配置</h2>
+              </div>
+              <div class="list" id="configItems"></div>
+            </div>
+
+            <div class="panel-block spaced">
+              <div class="panel-heading">
+                <h2>生产化准备度</h2>
+              </div>
+              <div class="list" id="productionItems"></div>
+            </div>
+
+            <div class="panel-block spaced">
+              <div class="panel-heading">
+                <h2>真实接口准备度</h2>
+              </div>
+              <div class="list" id="integrationItems"></div>
+            </div>
+          </aside>
+        </section>
+      </section>
+
+      <section class="dashboard">
+        <div class="metric">
+          <span id="taskCount">0</span>
+          <p>Agent 任务</p>
+        </div>
+        <div class="metric">
+          <span id="memoryCount">0</span>
+          <p>记忆条目</p>
+        </div>
+        <div class="metric">
+          <span id="approvalCount">0</span>
+          <p>待审批</p>
+        </div>
+        <div class="metric">
+          <span id="toolCount">0</span>
+          <p>注册工具</p>
+        </div>
+        <div class="metric">
+          <span id="knowledgeCount">0</span>
+          <p>知识文档</p>
+        </div>
+        <div class="metric">
+          <span id="leadCount">0</span>
+          <p>客户线索</p>
+        </div>
+        <div class="metric">
+          <span id="assetCount">0</span>
+          <p>内容资产</p>
+        </div>
+        <div class="metric">
+          <span id="metricCount">0</span>
+          <p>指标记录</p>
+        </div>
+      </section>
+
+      <section class="board">
+        <div class="board-column">
+          <div class="panel-heading">
+            <h2>任务板</h2>
+          </div>
+          <div class="list" id="tasks"></div>
+        </div>
+
+        <div class="board-column">
+          <div class="panel-heading">
+            <h2>审批中心</h2>
+          </div>
+          <div class="list" id="approvals"></div>
+        </div>
+
+        <div class="board-column">
+          <div class="panel-heading">
+            <h2>工具注册中心</h2>
+          </div>
+          <div class="list" id="tools"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
